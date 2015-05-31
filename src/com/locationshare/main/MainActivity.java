@@ -110,7 +110,7 @@ public class MainActivity extends Activity {
 		LocationClientOption option = new LocationClientOption();
 		option.setLocationMode(LocationMode.Hight_Accuracy);// 设置定位模式
 		option.setCoorType("bd09ll");// 返回的定位结果是百度经纬度,默认值gcj02
-		option.setScanSpan(5000);// 设置发起定位请求的间隔时间为9000ms
+		option.setScanSpan(5000);// 设置发起定位请求的间隔时间为5000ms
 		option.setIsNeedAddress(true);// 返回的定位结果包含地址信息
 		option.setNeedDeviceDirect(true);// 返回的定位结果包含手机机头的方向
 		option.setOpenGps(true);// 打开gps
@@ -232,9 +232,9 @@ public class MainActivity extends Activity {
 			mRadius = location.getRadius();
 
 			// 将自己的定位信息更新到云存储中
-			 HashMap<String, Object> filterParams = getUpdatePoiParams();
-			 LBSCloudSearch.request(LBSCloudSearch.SEARCH_TYPE_UPDATE,
-			 filterParams, createHandler);
+			HashMap<String, Object> filterParams = getUpdatePoiParams();
+			LBSCloudSearch.request(LBSCloudSearch.SEARCH_TYPE_UPDATE,
+					filterParams, createHandler);
 
 			// 获取对方存储在云存储中的定位信息，并更新otherLatitude，otherLongitude，otherDirction
 			filterParams = getQueryOtherPoiParams();
@@ -338,10 +338,11 @@ public class MainActivity extends Activity {
 			}
 			Log.e("LocationShare",
 					"Into parsor---------->" + temp.getJSONArray("location")
-							+ "  direction---->" + otherDirection + "id------>" + temp.getInt("id"));
+							+ "  direction---->" + otherDirection + "id------>"
+							+ temp.getInt("id"));
 		}
-		//根据total判断自己的位置信息在数据库中是否有记录，若没有则创建
-		//程序中有三种数据库操作，query，create，update，只有query会返回total参数
+		// 根据total判断自己的位置信息在数据库中是否有记录，若没有则创建
+		// 程序中有三种数据库操作，query，create，update，只有query会返回total参数
 		if (json.optInt("total", -1) == 0) {
 			HashMap<String, Object> filterParams = getCreatePoiParams();
 			LBSCloudSearch.request(LBSCloudSearch.SEARCH_TYPE_CREATE,

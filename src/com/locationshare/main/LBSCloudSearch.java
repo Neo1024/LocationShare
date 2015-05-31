@@ -119,9 +119,10 @@ public class LBSCloudSearch {
 								HTTP.UTF_8));
 						httpResponse = httpclient.execute(httpPost);
 						if (searchType == LBSCloudSearch.SEARCH_TYPE_CREATE) {
-							Log.e("LocationShareCreate", "------------>Create--->"
-									+ httpResponse.getStatusLine()
-											.getStatusCode());
+							Log.e("LocationShareCreate",
+									"------------>Create--->"
+											+ httpResponse.getStatusLine()
+													.getStatusCode());
 						}
 					}
 					int status = httpResponse.getStatusLine().getStatusCode();
@@ -152,11 +153,6 @@ public class LBSCloudSearch {
 			}
 		};
 		requestThread.start();
-		// try {
-		// requestThread.join();
-		// } catch (InterruptedException e) {
-		// e.printStackTrace();
-		// }
 
 		return;
 	}

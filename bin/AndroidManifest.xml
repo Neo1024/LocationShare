@@ -19,7 +19,7 @@
 
         <activity
             android:name="com.locationshare.main.MainActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name_full" >
         </activity>
 
         <service
@@ -30,16 +30,11 @@
 
         <activity
             android:name="com.locationshare.main.InputActivity"
-            android:label="@string/title_activity_input" >
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity
-            android:name="com.locationshare.LocationActivityActivity"
-            android:label="@string/title_activity_location_activity" >
         </activity>
     </application>
 
