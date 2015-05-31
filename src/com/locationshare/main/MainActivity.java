@@ -270,7 +270,7 @@ public class MainActivity extends Activity {
 		filterParams.put("title", ownPhoneNumber);
 		filterParams.put("latitude", mLatitude);
 		filterParams.put("longitude", mLongitude);
-		filterParams.put("dircetion", mDirction);
+		filterParams.put("direction", mDirction);
 		filterParams.put("coord_type", 3); // 默认使用百度经纬度
 
 		return filterParams;
@@ -313,7 +313,7 @@ public class MainActivity extends Activity {
 		filterParams.put("title", ownPhoneNumber);
 		filterParams.put("latitude", mLatitude);
 		filterParams.put("longitude", mLongitude);
-		filterParams.put("dirction", mDirction);
+		filterParams.put("direction", mDirction);
 		filterParams.put("id", ownPoiId);
 		filterParams.put("coord_type", 3); // 默认使用百度经纬度
 
