@@ -118,8 +118,8 @@ public class MainActivity extends Activity {
 
 		// 首先查询自己的位置信息以判断云存储中是否有自己的位置信息记录，若不存在则创建
 		// 并且同时获取自己的poiId用于更新自己的位置信息时使用
-		HashMap<String, Object> filterParams = getQueryOwnPoiParams();
-		LBSCloudSearch.request(LBSCloudSearch.SEARCH_TYPE_QUERY, filterParams,
+		HashMap<String, Object> queryOwnParams = getQueryOwnPoiParams();
+		LBSCloudSearch.request(LBSCloudSearch.SEARCH_TYPE_QUERY, queryOwnParams,
 				createHandler);
 
 		// 开始定位
@@ -146,6 +146,8 @@ public class MainActivity extends Activity {
 					JSONObject json = new JSONObject(result);
 					parser(json);
 				} catch (JSONException e) {
+					e.printStackTrace();
+				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 				break;
@@ -232,14 +234,14 @@ public class MainActivity extends Activity {
 			mRadius = location.getRadius();
 
 			// 将自己的定位信息更新到云存储中
-			HashMap<String, Object> filterParams = getUpdatePoiParams();
+			HashMap<String, Object> createParams = getUpdatePoiParams();
 			LBSCloudSearch.request(LBSCloudSearch.SEARCH_TYPE_UPDATE,
-					filterParams, createHandler);
+					createParams, createHandler);
 
 			// 获取对方存储在云存储中的定位信息，并更新otherLatitude，otherLongitude，otherDirction
-			filterParams = getQueryOtherPoiParams();
+			HashMap<String, Object> queryOtherParams = getQueryOtherPoiParams();
 			LBSCloudSearch.request(LBSCloudSearch.SEARCH_TYPE_QUERY,
-					filterParams, createHandler);
+					queryOtherParams, createHandler);
 
 			// 构造定位数据
 			locData = new MyLocationData.Builder().accuracy(mRadius)
@@ -323,7 +325,7 @@ public class MainActivity extends Activity {
 	/*
 	 * 解析返回数据
 	 */
-	private void parser(JSONObject json) throws JSONException {
+	private synchronized void parser(JSONObject json) throws JSONException, InterruptedException {
 		Log.e("LocationShare",
 				"AllMsg: " + json + "Into parsor:" + json.optJSONArray("pois"));
 		JSONArray poisArr = json.optJSONArray("pois");
@@ -332,9 +334,11 @@ public class MainActivity extends Activity {
 			otherLatitude = temp.getJSONArray("location").optDouble(1);
 			otherLongitude = temp.getJSONArray("location").optDouble(0);
 			otherDirection = temp.getDouble("direction");
+			Log.e("LocationShareUpdate", "update--------->ownPoiId:" + temp.getInt("id"));
 			// 如果号码是自己的号码，表明返回的数据是自己的位置信息，在此处设置poi的id的供更新数时使用
 			if (temp.getString("title").equals(ownPhoneNumber)) {
 				ownPoiId = temp.getInt("id");
+				Log.e("LocationShareUpdate", "update--------->ownPoiId:" + temp.getInt("id") + "set ok");
 			}
 			Log.e("LocationShare",
 					"Into parsor---------->" + temp.getJSONArray("location")
@@ -344,10 +348,15 @@ public class MainActivity extends Activity {
 		// 根据total判断自己的位置信息在数据库中是否有记录，若没有则创建
 		// 程序中有三种数据库操作，query，create，update，只有query会返回total参数
 		if (json.optInt("total", -1) == 0) {
-			HashMap<String, Object> filterParams = getCreatePoiParams();
+			HashMap<String, Object> createParams = getCreatePoiParams();
 			LBSCloudSearch.request(LBSCloudSearch.SEARCH_TYPE_CREATE,
-					filterParams, createHandler);
+					createParams, createHandler);
 			Log.e("LocationShareCreate", "------------->创建位置信息请求！");
+			Thread.sleep(1000);
+			
+			HashMap<String, Object> queryOwnParams = getQueryOwnPoiParams();
+			LBSCloudSearch.request(LBSCloudSearch.SEARCH_TYPE_QUERY,
+					queryOwnParams, createHandler);
 		}
 		total = json.optInt("total");
 		status = json.optInt("status");
